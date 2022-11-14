@@ -150,11 +150,18 @@ int main(int argc, char* args[]) {
     vector<AISTER_GRAPHICS_ENGINE::RayHit> hitGroup;
     vector<int> hitInd;
 
+    vector<glm::vec3> translated_vertices;
+    for (auto v : plys.vertices) {
+        glm::vec3 res = plys.getTRS()* glm::vec4(v, 1);
+
+        translated_vertices.push_back(res);
+    }
+
     auto _start = glfwGetTime();
     for (int i = 0; i < dirList.size(); i++) {
         AISTER_GRAPHICS_ENGINE::Ray ray(cam.position, dirList[i]);
 
-        AISTER_GRAPHICS_ENGINE::RayHit res = ray.traverse(bvh, plys.vertices, triList);
+        AISTER_GRAPHICS_ENGINE::RayHit res = ray.traverse(bvh, translated_vertices, triList);
 
         if (res.isHit) {
             hitInd.push_back(i);
@@ -164,7 +171,7 @@ int main(int argc, char* args[]) {
     auto _end = glfwGetTime();
 
     auto _g_start = glfwGetTime();
-    auto hitGroup2 = RayTraverse(cam.position, dirList, bvh, plys.vertices, triList, plys.vertices.size(), triList.size(), 640, 480);
+    auto hitGroup2 = RayTraverse(cam.position, dirList, bvh, translated_vertices, triList, plys.vertices.size(), triList.size(), 640, 480);
     auto _g_end = glfwGetTime();
 
     cout << "hitGroupSize(CPU) : " << hitGroup.size() << endl;
@@ -173,14 +180,14 @@ int main(int argc, char* args[]) {
     cout << "Time(ms) : " << (_g_end - _g_start) * 1000 << endl;
 
     vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr(350);
-    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr2(hitGroup2.size());
+    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr2(350);
 
     for (int i = 0; i < 350; i++) {
         lr[i].setShaderLine(cam.position, hitGroup[i*hitGroup.size()/ 350].position, &lineShader);
     }
 
-    for (int i = 0; i < lr2.size(); i++) {
-        lr2[i].setShaderLine(cam.position, hitGroup2[i].position, &lineShader);
+    for (int i = 0; i < 350; i++) {
+        lr2[i].setShaderLine(cam.position, hitGroup2[i * hitGroup2.size() / 350].position, &lineShader);
         lr2[i].setColor(glm::vec4(0, 0, 1, 1));
     }
     
@@ -223,11 +230,11 @@ int main(int argc, char* args[]) {
             glDepthFunc(GL_ALWAYS);
             //for(int i = 0; i<64;i++) boxRenderer[i].Draw(cam);
             //boxRenderer[0].Draw(cam);
-            //for (auto lrs : lr)
-            //    lrs.Draw(cam);
+            /*for (auto lrs : lr)
+                lrs.Draw(cam);
 
             for (auto lrs : lr2)
-                lrs.Draw(cam);
+                lrs.Draw(cam);*/
         }
 
         glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameImage2);

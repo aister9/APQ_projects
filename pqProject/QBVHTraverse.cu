@@ -30,17 +30,17 @@ struct GPUQBVH4 {
 	child childs[4]; // 16 byte
 };
 
-__device__ bool intersect(GPURay* ray, GPUQBVH4 node, int i) {
+__device__ bool intersect(GPURay* ray, GPUQBVH4 *node, int i) {
 	float3 bMin;
-	bMin.x = node.start.x + node.extent.x * node.boxData[i].qlower[0];
-	bMin.y = node.start.y + node.extent.y * node.boxData[i].qlower[1];
-	bMin.z = node.start.z + node.extent.z * node.boxData[i].qlower[2];
+	bMin.x = node->start.x + node->extent.x * (float)node->boxData[i].qlower[0];
+	bMin.y = node->start.y + node->extent.y * (float)node->boxData[i].qlower[1];
+	bMin.z = node->start.z + node->extent.z * (float)node->boxData[i].qlower[2];
 	float3 bMax;
-	bMax.x = node.start.x + node.extent.x * node.boxData[i].qupper[0];
-	bMax.y = node.start.y + node.extent.y * node.boxData[i].qupper[1];
-	bMax.z = node.start.z + node.extent.z * node.boxData[i].qupper[2];
+	bMax.x = node->start.x + node->extent.x * (float)node->boxData[i].qupper[0];
+	bMax.y = node->start.y + node->extent.y * (float)node->boxData[i].qupper[1];
+	bMax.z = node->start.z + node->extent.z * (float)node->boxData[i].qupper[2];
 
-	float3 invDir = make_float3(1 / ray->dir.x, 1 / ray->dir.y, 1 / ray->dir.z);
+	float3 invDir = make_float3(1.f / ray->dir.x, 1.f / ray->dir.y, 1.f / ray->dir.z);
 
 	float3 tMin = (bMin-ray->origin) * invDir;
 	float3 tMax = (bMax-ray->origin) * invDir;
@@ -68,9 +68,6 @@ __device__ bool intersect(GPURay* ray, GPUQBVH4 node, int i) {
 		_max = _min - _max;
 		_min = _min - _max;
 	}
-
-	if (ray->tmin < _min)
-		return false;
 
 	return true;
 }
@@ -100,11 +97,11 @@ __device__ bool intersect(GPURay* ray, float3 p0, float3 p1, float3 p2) {
 	float t = f * dot(e2, q);
 
 	if (t > epsillon) {
-		if (ray->tmin > t) {
+		
+		if(ray->tmin >= t)
 			ray->tmin = t;
-			return true;
-		}
-		else return false;
+
+		return true;
 	}
 	else return false;
 }
@@ -122,7 +119,7 @@ __global__ void traverse(GPURay* rays, GPUQBVH4* bvhs, float3 *vertices, int3 *t
 	int nodeind = 0;
 
 	stack[0] = 0;
-
+	
 	while (nodeind != -1) {
 		int dataind = stack[nodeind];
 		nodeind--;
@@ -142,10 +139,10 @@ __global__ void traverse(GPURay* rays, GPUQBVH4* bvhs, float3 *vertices, int3 *t
 				}
 			}
 			else {
-				bool isHit = intersect(&rays[idx], bvhs[dataind], i);
+				bool isHit = intersect(&rays[idx], &bvhs[dataind], i);
 				if (isHit) {
 					nodeind++;
-					stack[nodeind] = bvhs[dataind].childs[i].boxIdx;
+					stack[nodeind] = dataind+bvhs[dataind].childs[i].boxIdx;
 				}
 			}
 		}
@@ -173,13 +170,13 @@ std::vector<AISTER_GRAPHICS_ENGINE::RayHit> RayTraverse(glm::vec3 origin, std::v
 	for (int i = 0; i < arraysize; i++) {
 		cpuRay[i].origin = make_float3(origin.x, origin.y, origin.z);
 		cpuRay[i].dir = make_float3(dirlist[i].x, dirlist[i].y, dirlist[i].z);
-		cpuRay[i].tmin = 1e34f;
-		cpuRay[i].tmax = 1e34f;
+		cpuRay[i].tmin = 987654321.f;
+		cpuRay[i].tmax = 987654321.f;
 		cpuRay[i].isHit = false;
 	}
 
-	dim3 block_(16, 16);
-	dim3 grid_(ceil(width / 16.f), ceil(height / 16.f));
+	dim3 block_(32, 32);
+	dim3 grid_(ceil(width / 32.f), ceil(height / 32.f));
 
 	cudaMemcpy(rayGPU, cpuRay, sizeof(GPURay) * arraysize, cudaMemcpyHostToDevice);
 	//
@@ -195,7 +192,7 @@ std::vector<AISTER_GRAPHICS_ENGINE::RayHit> RayTraverse(glm::vec3 origin, std::v
 	
 	std::vector<AISTER_GRAPHICS_ENGINE::RayHit> res;
 	for (int i = 0; i < arraysize; i++) {
-		if (cpuRay[i].isHit) {
+		if (cpuRay[i].tmax - cpuRay[i].tmin >= 0.03) {
 			float3 resultPos = (cpuRay[i].origin + cpuRay[i].dir * cpuRay[i].tmin);
 			res.push_back(AISTER_GRAPHICS_ENGINE::RayHit(glm::vec3(resultPos.x, resultPos.y, resultPos.z), cpuRay[i].tmin));
 		}
