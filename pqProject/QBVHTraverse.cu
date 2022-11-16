@@ -178,10 +178,17 @@ std::vector<AISTER_GRAPHICS_ENGINE::RayHit> RayTraverse(glm::vec3 origin, std::v
 	dim3 block_(32, 32);
 	dim3 grid_(ceil(width / 32.f), ceil(height / 32.f));
 
+	cudaEvent_t t_start, t_end;
+	cudaEventCreate(&t_start); cudaEventCreate(&t_end);
+
 	cudaMemcpy(rayGPU, cpuRay, sizeof(GPURay) * arraysize, cudaMemcpyHostToDevice);
+
 	//
+	cudaEventRecord(t_start);
 	traverse << <grid_, block_ >> > (rayGPU, bvhGPU, vert, tri, vertices.size(), trilist.size(), width, height);
+	cudaEventRecord(t_end);
 	cudaDeviceSynchronize();
+	cudaEventSynchronize(t_end);
 	//
 	cudaMemcpy(cpuRay, rayGPU, sizeof(GPURay) * arraysize, cudaMemcpyDeviceToHost);
 
@@ -199,6 +206,10 @@ std::vector<AISTER_GRAPHICS_ENGINE::RayHit> RayTraverse(glm::vec3 origin, std::v
 	}
 
 	delete[] cpuRay;
+
+	float kernelTime = 0.0f;
+	cudaEventElapsedTime(&kernelTime, t_start, t_end);
+	std::cout << "Kernel time(ms) : " << kernelTime << std::endl;
 
 	return res;
 }

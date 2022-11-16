@@ -1,0 +1,7 @@
+﻿  Main.cpp
+     Creating library C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.lib and object C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 28 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  optixTutorial.vcxproj -> C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exe

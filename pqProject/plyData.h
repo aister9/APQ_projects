@@ -78,6 +78,8 @@ namespace AISTER_GRAPHICS_ENGINE {
 					}
 				}
 			}
+
+			m_file.close();
 		}
 
 		void print() {

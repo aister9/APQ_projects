@@ -20,6 +20,7 @@ namespace AISTER_GRAPHICS_ENGINE {
 		}
 
 		glm::mat4 getViewMatrix() {
+			//direction = glm::vec3(getTRS() * glm::vec4(direction,1));
 			return glm::lookAt(position, position+direction, up) * glm::mat4(1.0f);
 		}
 		glm::mat4 getViewMatrix(glm::vec3 target, glm::vec3 up) {

@@ -153,6 +153,7 @@
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="BoxRenderer.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ColorUtil.h" />
     <ClInclude Include="glHeaders.h" />
     <ClInclude Include="helperMath.h" />
     <ClInclude Include="LineRenderer.h" />
@@ -161,6 +162,8 @@
     <ClInclude Include="objReader.h" />
     <ClInclude Include="plyData.h" />
     <ClInclude Include="QBVH4.h" />
+    <ClInclude Include="RangeDataReader.h" />
+    <ClInclude Include="RangeDataRenderer.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
@@ -175,6 +178,8 @@
     <None Include="mesh_frag.glsl" />
     <None Include="mesh_mask.glsl" />
     <None Include="mesh_vertex.glsl" />
+    <None Include="pc_f.glsl" />
+    <None Include="pc_v.glsl" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="QBVHTraverse.cu" />

@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <optix.h>
-
 #include "glHeaders.h"
 #include "plyData.h"
 #include "Texture.h"
@@ -9,6 +7,8 @@
 #include "Renderer.h"
 #include "BoxRenderer.h"
 #include "LineRenderer.h"
+#include "RangeDataReader.h"
+#include "RangeDataRenderer.h"
 #include "Scene.h"
 #include "QBVH4.h"
 #include "Ray.h"
@@ -88,6 +88,21 @@ int main(int argc, char* args[]) {
 
     cout << "r : " << plys.get_r_bbox() << endl;
     AISTER_GRAPHICS_ENGINE::Texture tex("example/Cherries.png");
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+        Rangedata test
+    */
+    AISTER_GRAPHICS_ENGINE::range_data rd;
+    rd.read("example/data/", "bun.conf");
+    rd.baseCam.direction = glm::normalize(glm::mat4(rd.baseCam.rotation) * glm::vec4(0, 0, -1, 1));
+    rd.setCameraAllResol(glm::vec2(width, height));
+
+    AISTER_GRAPHICS_ENGINE::Shader range_shader;
+    range_shader.initShaders("pc_v.glsl", "pc_f.glsl");
+    AISTER_GRAPHICS_ENGINE::Range_Renderer rr;
+    rr.setShader(&rd, &range_shader);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     AISTER_GRAPHICS_ENGINE::Shader sh;
     sh.initShaders("mesh_vertex.glsl", "mesh_frag.glsl");
@@ -230,10 +245,10 @@ int main(int argc, char* args[]) {
             glDepthFunc(GL_ALWAYS);
             //for(int i = 0; i<64;i++) boxRenderer[i].Draw(cam);
             //boxRenderer[0].Draw(cam);
-            /*for (auto lrs : lr)
+            for (auto lrs : lr)
                 lrs.Draw(cam);
 
-            for (auto lrs : lr2)
+            /*for (auto lrs : lr2)
                 lrs.Draw(cam);*/
         }
 
@@ -245,6 +260,7 @@ int main(int argc, char* args[]) {
         glDepthFunc(GL_LESS);
         //renderer.Draw(cam, glm::vec4(1, 0, 0, 1), false);
         renderer.Draw(persp * m2c, glm::vec4(1, 0, 0, 1));
+        //rr.Draw(rd.baseCam);
 
         glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameImage);
 
