@@ -17,6 +17,21 @@
 #include "SampleRenderer.h"
 // this include may only appear in a single source file:
 #include <optix_function_table_definition.h>
+#include <fstream>
+
+static bool readSourceFile(std::string& str, const std::string& filename)
+{
+    // Try to open file
+    std::ifstream file(filename.c_str(), std::ios::binary);
+    if (file.good())
+    {
+        // Found usable source file
+        std::vector<unsigned char> buffer = std::vector<unsigned char>(std::istreambuf_iterator<char>(file), {});
+        str.assign(buffer.begin(), buffer.end());
+        return true;
+    }
+    return false;
+}
 
 /*! \namespace osc - Optix Siggraph Course */
 namespace osc {
@@ -355,7 +370,13 @@ namespace osc {
 
         pipelineLinkOptions.maxTraceDepth = 2;
 
-        const std::string ptxCode = embedded_ptx_code;
+        std::string *ptx = new std::string();
+
+        if (readSourceFile(*ptx, "devicePrograms.ptx")) {
+        }
+
+        //const std::string ptxCode = embedded_ptx_code;
+        const std::string ptxCode = ptx->c_str();
 
         char log[2048];
         size_t sizeof_log = sizeof(log);

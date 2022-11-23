@@ -138,7 +138,7 @@ namespace osc {
     {
         vec3f& prd = *(vec3f*)getPRD<vec3f>();
         // set to constant white as background color
-        prd = vec3f(1.f);
+        prd = vec3f(1.f, 0.f, 0.f);
     }
 
     //------------------------------------------------------------------------------

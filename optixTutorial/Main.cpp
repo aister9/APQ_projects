@@ -20,6 +20,8 @@
 #include "glfWindow/GLFWindow.h"
 #include <GL/gl.h>
 
+#include "MyCudaAdd.h"
+
 /*! \namespace osc - Optix Siggraph Course */
 namespace osc {
 

@@ -141,12 +141,11 @@
       <AdditionalDependencies>../x64/Release/gdt.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\lib\x64\cudart_static.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\lib\x64\cuda.lib;../x64/Release/glfWindow.lib;../x64/Release/glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
-      <CompileOut>$(ProjectDir)test.ptx</CompileOut>
-      <Keep>true</Keep>
-      <NvccCompilation>ptx</NvccCompilation>
+      <Keep>false</Keep>
+      <NvccCompilation>compile</NvccCompilation>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <KeepDir>$(ProjectDir)</KeepDir>
-      <Include>C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.4.0\include</Include>
+      <Include>
+      </Include>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,6 +158,7 @@
     <ClInclude Include="CUDABuffer.h" />
     <ClInclude Include="LaunchParams.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="MyCudaAdd.h" />
     <ClInclude Include="optix7.h" />
     <ClInclude Include="SampleRenderer.h" />
   </ItemGroup>
@@ -166,6 +166,9 @@
     <None Include="devicePrograms.cu">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="MyCudaAdd.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
