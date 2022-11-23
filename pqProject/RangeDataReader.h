@@ -75,6 +75,7 @@ namespace AISTER_GRAPHICS_ENGINE {
 		}
 
 		void setCameraAllResol(glm::vec2 resol) {
+			baseCam.screenResolution = resol;
 			for (auto& c : camInfo) {
 				c.screenResolution = resol;
 			}

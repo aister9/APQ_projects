@@ -259,11 +259,15 @@ int main(int argc, char* args[]) {
         
         glDepthFunc(GL_LESS);
         //renderer.Draw(cam, glm::vec4(1, 0, 0, 1), false);
-        renderer.Draw(persp * m2c, glm::vec4(1, 0, 0, 1));
-        //rr.Draw(rd.baseCam);
+        //renderer.Draw(persp * m2c, glm::vec4(1, 0, 0, 1));
+        rr.Draw(rd.baseCam);
 
         glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameImage);
 
+
+        glfwGetWindowSize(window, &width, &height);
+        cam.screenResolution = glm::vec2(width, height);
+        rd.setCameraAllResol(glm::vec2(width, height));
 
         glfwSwapBuffers(window);
     }

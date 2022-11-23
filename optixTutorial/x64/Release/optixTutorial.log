@@ -1,7 +1,13 @@
-﻿  Main.cpp
+﻿  cuda_compile_ptx_1_generated_devciePrograms.cu.ptx_embedded.c
+  Main.cpp
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\common\3rdParty\glfw\include\GLFW\glfw3.h(2537,1): warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+  Model.cpp
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\common\3rdParty\stb_image.h(7192,9): warning C4068: unknown pragma 'clang'
+  SampleRenderer.cpp
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\SampleRenderer.cpp(604,44): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
      Creating library C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.lib and object C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 28 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 2640 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   optixTutorial.vcxproj -> C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exe

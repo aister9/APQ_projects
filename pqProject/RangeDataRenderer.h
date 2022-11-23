@@ -43,7 +43,7 @@ namespace AISTER_GRAPHICS_ENGINE {
 
 			for (int i = 0; i < rd->datas.size(); i++) {
 				glm::mat4 trs = rd->datas[0].getTRS();
-				glm::mat4 MVPmat = rd->camInfo[i].getProjectionMatrix() * rd->camInfo[i].getViewMatrix() * trs;
+				glm::mat4 MVPmat = cam.getProjectionMatrix() *cam.getViewMatrix() * trs;
 
 				_color = ColorUtil::getColorfromJET(i, 0, rd->datas.size());
 				_color.a = 0.2f;
