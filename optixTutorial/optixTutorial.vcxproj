@@ -147,6 +147,9 @@
       <Include>
       </Include>
     </CudaCompile>
+    <PostBuildEvent>
+      <Command>gen_ptx.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cuda_compile_ptx_1_generated_devciePrograms.cu.ptx_embedded.c" />

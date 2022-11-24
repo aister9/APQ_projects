@@ -425,7 +425,7 @@ BB0_6:
 	ret;
 }
 
-	.file	1 "C:\\Users\\Ataraxia\\source\\repos\\pqProject\\optixTutorial\\devicePrograms.cu", 1669198557, 8333
+	.file	1 "C:\\Users\\Ataraxia\\source\\repos\\pqProject\\optixTutorial\\devicePrograms.cu", 1669254790, 8533
 	.file	2 "C:\\ProgramData\\NVIDIA Corporation\\OptiX SDK 7.4.0\\include\\internal/optix_7_device_impl.h", 1635981708, 336271
 	.file	3 "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\include\\texture_indirect_functions.h", 1591959026, 16949
 	.file	4 "C:\\Users\\Ataraxia\\source\\repos\\pqProject\\optixTutorial\\common/gdt\\gdt/math/vec.h", 1662566424, 13183
