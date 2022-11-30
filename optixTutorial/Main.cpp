@@ -116,6 +116,7 @@ namespace osc {
                 ofs << "Resolution : " << fbSize.x << ", " << fbSize.y << std::endl;
                 for (int i = 0; i < rayOrigin.size(); i++) {
                     if (rayTarget[i].x < -100000.f && rayTarget[i].y < -100000.f && rayTarget[i].z < -100000.f) {
+                        continue;
                         ofs << "miss ";
                     }
                     else {
@@ -123,6 +124,7 @@ namespace osc {
                     }
                     ofs << rayOrigin[i].x << " " << rayOrigin[i].y << " " << rayOrigin[i].z << " to ";
                     ofs << rayTarget[i].x << " " << rayTarget[i].y << " " << rayTarget[i].z << "\n";
+
                 }
             }
 
@@ -167,7 +169,6 @@ namespace osc {
 
             SampleWindow* window = new SampleWindow("Optix 7 Course Example",
                 model, camera, worldScale);
-            window->resize(vec2i(640, 480));
             window->run();
             window->parseRayResult("test.txt");
         }

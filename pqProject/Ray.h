@@ -13,7 +13,7 @@ namespace AISTER_GRAPHICS_ENGINE {
 		bool isHit;
 
 		RayHit() {
-			position = glm::vec3(0, 0, 0);
+			position = glm::vec3(INFINITE, INFINITE, INFINITE);
 			distance = std::numeric_limits<float>::max();
 			normal = glm::vec3(0, 0, 0);
 			isHit = false;
@@ -49,27 +49,15 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glm::vec3 tMin = (bMin - origin) * invDir;
 			glm::vec3 tMax = (bMax - origin) * invDir;
 
-			glm::vec3 tmp1 = glm::min(tMin, tMax);
-			glm::vec3 tmp2 = glm::max(tMin, tMax);
+			glm::vec3 t1 = glm::min(tMin, tMax);
+			glm::vec3 t2 = glm::max(tMin, tMax);
 
-			tMin = tmp1; tMax = tmp2;
+			float tNear = std::max(std::max(t1.x, t1.y), t1.z);
+			float tFar = std::min(std::min(t2.x, t2.y), t2.z);
 
-			float _min = glm::max(tMin.x, tMin.y);
-			float _max = glm::min(tMax.x, tMax.y);
+			if (tNear > tFar) return RayHit();
 
-			if (tMin.x > tMax.y || tMin.y > tMax.x) { return RayHit(); }
-			if (_min > tMax.z || tMin.z > _max) return RayHit();
-
-			_min = glm::max(_min, tMin.z);
-			_max = glm::min(_max, tMax.z);
-
-			glm::vec3 minPts = origin + _min * direction;
-			glm::vec3 maxPts = origin + _max * direction;
-
-			if (glm::distance(origin, minPts) > glm::distance(origin, maxPts))
-				std::swap(_min, _max);
-
-			return RayHit(origin + _min * direction, _min);
+			return RayHit(origin + tNear * direction, tNear);
 		}
 
 		RayHit intersect(std::vector<glm::vec3> &pts, __Tri_t &tri) {
@@ -122,14 +110,14 @@ namespace AISTER_GRAPHICS_ENGINE {
 					if (((bvh[dataInd].childFlag >> 4) & (1 << i)) == (1 << i)) // if leaf
 					{
 						RayHit check = intersect(pts, triList[bvh[dataInd].childs[i].triIdx]);
-						if (check.isHit && check.distance < res.distance)
+						if (check.isHit && glm::distance(origin, check.position) <= glm::distance(origin, res.position))
 						{
 							res = check;
 						}
 					}
 					else {
 						RayHit check = intersect(bvh[dataInd], i);
-						if (check.isHit && check.distance < res.distance)
+						if (check.isHit && check.distance <= res.distance)
 							indStack.push(dataInd+bvh[dataInd].childs[i].boxIdx);
 					}
 				}

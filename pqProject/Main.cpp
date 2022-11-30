@@ -74,16 +74,65 @@ glm::vec4 getColorfromJET(float v, float vmin, float vmax) {
     return glm::vec4(c, 1.0f);
 }
 
+void parseRayResult(const std::string& output, glm::vec3 rayOrigin, std::vector<AISTER_GRAPHICS_ENGINE::RayHit> hitGroups, int width, int height) {
+    std::ofstream ofs(output);
+
+    std::cout << "Save ray result ... ";
+
+    if (ofs.is_open()) {
+        ofs << "Resolution : " << width << ", " << height << std::endl;
+        for (int i = 0; i < hitGroups.size(); i++) {
+            if (!hitGroups[i].isHit) {
+                ofs << "miss ";
+            }
+            else {
+                ofs << "hit ";
+            }
+            ofs << rayOrigin.x << " " << rayOrigin.y << " " << rayOrigin.z << " to ";
+            ofs << hitGroups[i].position.x << " " << hitGroups[i].position.y << " " << hitGroups[i].position.z << "\n";
+        }
+    }
+
+    std::cout << "complete";
+
+    ofs.close();
+}
+
+std::vector<glm::vec3> getRayResult(const std::string& input) {
+    std::ifstream ifs(input);
+
+    std::vector<glm::vec3> output;
+
+    while (!ifs.eof()) {
+        std::string s;
+
+        ifs >> s;
+        if (s._Equal("to")) {
+            glm::vec3 target;
+            for (int i = 0; i < 3; i++) {
+                ifs >> s;
+                float vv = std::stof(s);
+                target[i] = vv;
+            }
+            output.push_back(target);
+        }
+    }
+
+    ifs.close();
+
+    return output;
+}
+
 int main(int argc, char* args[]) {
 
     GLFWwindow* window;
-    int width = 640, height = 480;
+    int width = 1200, height = 800;
 
     if (!glfwewInit(&window, width, height)) return -1;
 
     AISTER_GRAPHICS_ENGINE::PLYdata plys("example/Cherries.ply");
     plys.print();
-    plys.position = -1.f * plys.getCenter();
+    //plys.position = -1.f * plys.getCenter();
     auto boxs = plys.get_3d_bbox();
 
     cout << "r : " << plys.get_r_bbox() << endl;
@@ -147,7 +196,7 @@ int main(int argc, char* args[]) {
 
     vector<glm::vec3> dirList;
 
-    for (int yy = 0; yy < height; yy++) {
+    /*for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
             float nds_x = (2.0 * xx) / width - 1.0f;
             float nds_y = 1.0f-(2.0f*yy)/height;
@@ -159,6 +208,18 @@ int main(int argc, char* args[]) {
             glm::vec4 ray_world = glm::inverse(cam.getViewMatrix(glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) * ray_eye;
             glm::vec3 ray_res = glm::normalize(glm::vec3(ray_world));
             dirList.push_back(ray_res);
+        }
+    }*/
+
+    for (int yy = 0; yy < height; yy++) {
+        for (int xx = 0; xx < width; xx++) {
+            glm::vec2 screen(glm::vec2(xx + .5f, yy + .5f)/cam.screenResolution);
+
+            glm::vec3 rayDir = glm::normalize(cam.direction
+                + (screen.x - 0.5f) * cam.getHorizontal()
+                + (screen.y - 0.5f) * cam.getVertical());
+
+            dirList.push_back(rayDir);
         }
     }
 
@@ -186,7 +247,7 @@ int main(int argc, char* args[]) {
     auto _end = glfwGetTime();
 
     auto _g_start = glfwGetTime();
-    auto hitGroup2 = RayTraverse(cam.position, dirList, bvh, translated_vertices, triList, plys.vertices.size(), triList.size(), 640, 480);
+    auto hitGroup2 = RayTraverse(cam.position, dirList, bvh, translated_vertices, triList, plys.vertices.size(), triList.size(), width, height);
     auto _g_end = glfwGetTime();
 
     cout << "hitGroupSize(CPU) : " << hitGroup.size() << endl;
@@ -194,23 +255,32 @@ int main(int argc, char* args[]) {
     cout << "hitGroupSize(GPU) : " << hitGroup2.size() << endl;
     cout << "Time(ms) : " << (_g_end - _g_start) * 1000 << endl;
 
-    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr(350);
-    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr2(350);
+    parseRayResult("cpu_result.txt", cam.position, hitGroup, width, height);
+    parseRayResult("gpu_result.txt", cam.position, hitGroup2, width, height);
 
-    for (int i = 0; i < 350; i++) {
-        lr[i].setShaderLine(cam.position, hitGroup[i*hitGroup.size()/ 350].position, &lineShader);
+    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr(hitGroup.size());
+    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr2(hitGroup2.size());
+
+    for (int i = 0; i < hitGroup.size(); i++) {
+        lr[i].setShaderLine(cam.position, hitGroup[i].position, &lineShader);
     }
 
-    for (int i = 0; i < 350; i++) {
-        lr2[i].setShaderLine(cam.position, hitGroup2[i * hitGroup2.size() / 350].position, &lineShader);
+    for (int i = 0; i < hitGroup.size(); i++) {
+        lr2[i].setShaderLine(cam.position, hitGroup2[i].position, &lineShader);
         lr2[i].setColor(glm::vec4(0, 0, 1, 1));
+    }
+
+    auto optixRay = getRayResult("test.txt");
+    vector<AISTER_GRAPHICS_ENGINE::LineRenderer> lr3(optixRay.size());
+    for (int i = 0; i < lr3.size(); i++) {
+        lr3[i].setShaderLine(cam.position, optixRay[i], &lineShader);
+        lr3[i].setColor(glm::vec4(0, 1, 0, 1));
     }
     
     cam.position = cam.position + glm::vec3(0,15,7);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // m2c values
@@ -245,7 +315,7 @@ int main(int argc, char* args[]) {
             glDepthFunc(GL_ALWAYS);
             //for(int i = 0; i<64;i++) boxRenderer[i].Draw(cam);
             //boxRenderer[0].Draw(cam);
-            for (auto lrs : lr)
+            for (auto lrs : lr3)
                 lrs.Draw(cam);
 
             /*for (auto lrs : lr2)

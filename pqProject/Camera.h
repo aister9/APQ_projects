@@ -5,9 +5,9 @@
 namespace AISTER_GRAPHICS_ENGINE {
 	class Camera : public Object_t {
 	public:
-		glm::vec3 direction = glm::vec3(0,0,-1);
+		glm::vec3 direction = glm::vec3(-1,0,0);
 		glm::vec3 up = glm::vec3(0, 1, 0);
-		float fovy = 45.0f;
+		float fovy = 38.f;
 
 		glm::vec2 screenResolution;
 
@@ -38,6 +38,18 @@ namespace AISTER_GRAPHICS_ENGINE {
 			_near = znear;
 			_far = zfar;
 		}
+
+		glm::vec3 getHorizontal() {
+			const float aspect = screenResolution.x / screenResolution.y;
+			const float cosFovy = 0.66f;
+			return cosFovy * aspect * glm::normalize(glm::cross(direction, up));
+		}
+
+		glm::vec3 getVertical() {
+			const float cosFovy = 0.66f;
+			return cosFovy * glm::normalize(glm::cross(getHorizontal(), direction));
+		}
+
 	};
 
 	glm::mat4 getPerspectiveUsingK(float fx, float fy, float cx, float cy, int w, int h, float znear, float zfar) {
