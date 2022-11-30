@@ -213,4 +213,124 @@ namespace osc {
         std::cout << "created a total of " << model->meshes.size() << " meshes" << std::endl;
         return model;
     }
+
+    TriangleMesh* PLYdata(std::string ply_path) {
+        TriangleMesh* mesh = new TriangleMesh;
+
+        std::ifstream m_file(ply_path);
+        float vertexsize = 0;
+        float facesize = 0;
+
+        while (!m_file.eof()) {
+            std::string tmp;
+            m_file >> tmp;
+
+            if (tmp._Equal("element")) {
+                m_file >> tmp;
+                if (tmp._Equal("vertex")) {
+                    m_file >> tmp;
+                    vertexsize = atof(tmp.c_str());
+                }
+                else if (tmp._Equal("face")) {
+                    m_file >> tmp;
+                    facesize = atof(tmp.c_str());
+                }
+            }
+
+            if (tmp._Equal("end_header")) {
+                for (int i = 0; i < vertexsize; i++) {
+                    float x, y, z, nx, ny, nz, uu, vv;
+                    m_file >> tmp;
+                    x = atof(tmp.c_str());
+                    m_file >> tmp;
+                    y = atof(tmp.c_str());
+                    m_file >> tmp;
+                    z = atof(tmp.c_str());
+                    m_file >> tmp;
+                    nx = atof(tmp.c_str());
+                    m_file >> tmp;
+                    ny = atof(tmp.c_str());
+                    m_file >> tmp;
+                    nz = atof(tmp.c_str());
+                    m_file >> tmp;
+                    uu = atof(tmp.c_str());
+                    m_file >> tmp;
+                    vv = atof(tmp.c_str());
+
+                    vec3f pos(x, y, z);
+                    vec3f normals(nx, ny, nz);
+                    vec2f _uv(uu, vv);
+
+                    mesh->vertex.push_back(pos);
+                    mesh->normal.push_back(normals);
+                    mesh->texcoord.push_back(_uv);
+                }
+
+                for (int i = 0; i < facesize; i++) {
+                    int count = 0;
+                    m_file >> tmp;
+                    count = atoi(tmp.c_str());
+
+                    vec3i idx_t;
+                    for (int j = 0; j < count; j++) {
+                        int idx = 0;
+                        m_file >> tmp;
+                        idx = atoi(tmp.c_str());
+                        idx_t[j] = idx;
+                    }
+                    mesh->index.push_back(idx_t);
+                }
+            }
+        }
+
+        mesh->diffuse = (const vec3f)vec3f(1, 1, 1);
+        mesh->diffuseTextureID = 0;
+
+        m_file.close();
+
+        return mesh;
+    }
+
+    Model* loadPLY(const std::string& objFile, const std::string& texFile) {
+        Model* model = new Model;
+
+        TriangleMesh* mesh = PLYdata(objFile);
+        model->meshes.push_back(mesh);
+
+        vec2i res;
+        int   comp;
+        unsigned char* image = stbi_load(texFile.c_str(),
+            &res.x, &res.y, &comp, STBI_rgb_alpha);
+        int textureID = -1;
+        if (image) {
+            textureID = (int)model->textures.size();
+            Texture* texture = new Texture;
+            texture->resolution = res;
+            texture->pixel = (uint32_t*)image;
+
+            /* iw - actually, it seems that stbi loads the pictures
+               mirrored along the y axis - mirror them here */
+            for (int y = 0; y < res.y / 2; y++) {
+                uint32_t* line_y = texture->pixel + y * res.x;
+                uint32_t* mirrored_y = texture->pixel + (res.y - 1 - y) * res.x;
+                int mirror_y = res.y - 1 - y;
+                for (int x = 0; x < res.x; x++) {
+                    std::swap(line_y[x], mirrored_y[x]);
+                }
+            }
+
+            model->textures.push_back(texture);
+        }
+        else {
+            std::cout << GDT_TERMINAL_RED
+                << "Could not load texture from " << texFile << "!"
+                << GDT_TERMINAL_DEFAULT << std::endl;
+        }
+
+        for (auto mesh : model->meshes)
+            for (auto vtx : mesh->vertex)
+                model->bounds.extend(vtx);
+
+        return model;
+    }
 }

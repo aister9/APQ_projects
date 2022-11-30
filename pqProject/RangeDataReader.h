@@ -56,17 +56,25 @@ namespace AISTER_GRAPHICS_ENGINE {
 						posquat[i] = std::stof(tmp);
 					}
 
-					Camera cams;
-					cams.position = glm::vec3(posquat[0], posquat[1], posquat[2]);
-					cams.rotation = glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]);
-
-					glm::vec3 t = cams.getTRS() * glm::vec4(baseCam.position,1);
-					glm::vec3 dir_t = glm::normalize(cams.getTRS() * baseCam.getTRS() * glm::vec4(cams.direction, 1));
-
-					cams.position = t;
-					cams.direction = dir_t;
+					/*data.position = glm::vec3(posquat[0], posquat[1], posquat[2]);
+					data.rotation = glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]);*/
 
 					datas.push_back(data);
+
+					Camera cams;
+					//if (camInfo.size() == 0) {
+					//	cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(baseCam.position, 1))
+					//		+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
+					//	cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(baseCam.rotation)); // r'*r
+					//}
+					//else {
+					//	cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(camInfo.back().position, 1))
+					//		+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
+					//	cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(camInfo.back().rotation)); // r'*r
+					//}
+					cams = baseCam;
+					cams.direction = glm::normalize(glm::toMat3(cams.rotation) * glm::vec3(0,0,-1));
+
 					camInfo.push_back(cams);
 				}
 			}

@@ -20,6 +20,7 @@
 #include "glfWindow/GLFWindow.h"
 #include <GL/gl.h>
 
+#include <fstream>
 #include "MyCudaAdd.h"
 
 /*! \namespace osc - Optix Siggraph Course */
@@ -51,6 +52,7 @@ namespace osc {
         virtual void draw() override
         {
             sample.downloadPixels(pixels.data());
+            sample.downloadRayResult(rayOrigin.data(), rayTarget.data());
             if (fbTexture == 0)
                 glGenTextures(1, &fbTexture);
 
@@ -101,12 +103,40 @@ namespace osc {
             fbSize = newSize;
             sample.resize(newSize);
             pixels.resize(newSize.x * newSize.y);
+            rayOrigin.resize(newSize.x * newSize.y);
+            rayTarget.resize(newSize.x * newSize.y);
+        }
+
+        void parseRayResult(const std::string& output) {
+            std::ofstream ofs(output);
+
+            std::cout << "Save ray result ... ";
+
+            if (ofs.is_open()) {
+                ofs << "Resolution : " << fbSize.x << ", " << fbSize.y << std::endl;
+                for (int i = 0; i < rayOrigin.size(); i++) {
+                    if (rayTarget[i].x < -100000.f && rayTarget[i].y < -100000.f && rayTarget[i].z < -100000.f) {
+                        ofs << "miss ";
+                    }
+                    else {
+                        ofs << "hit ";
+                    }
+                    ofs << rayOrigin[i].x << " " << rayOrigin[i].y << " " << rayOrigin[i].z << " to ";
+                    ofs << rayTarget[i].x << " " << rayTarget[i].y << " " << rayTarget[i].z << "\n";
+                }
+            }
+
+            std::cout << "complete";
+
+            ofs.close();
         }
 
         vec2i                 fbSize;
         GLuint                fbTexture{ 0 };
         SampleRenderer        sample;
         std::vector<uint32_t> pixels;
+        std::vector<vec3f> rayOrigin;
+        std::vector<vec3f> rayTarget;
     };
 
 
@@ -115,19 +145,21 @@ namespace osc {
     extern "C" int main(int ac, char** av)
     {
         try {
-            Model* model = loadOBJ(
-#ifdef _WIN32
-                // on windows, visual studio creates _two_ levels of build dir
-                // (x86/Release)
-                "models/sponza.obj"
-#else
-                // on linux, common practice is to have ONE level of build dir
-                // (say, <project>/build/)...
-                "/models/sponza.obj"
-#endif
-            );
-            Camera camera = { /*from*/vec3f(-1293.07f, 154.681f, -0.7304f),
-                /* at */model->bounds.center() - vec3f(0,400,0),
+//            Model* model = loadOBJ(
+//#ifdef _WIN32
+//                // on windows, visual studio creates _two_ levels of build dir
+//                // (x86/Release)
+//                "models/sponza.obj"
+//#else
+//                // on linux, common practice is to have ONE level of build dir
+//                // (say, <project>/build/)...
+//                "/models/sponza.obj"
+//#endif
+//            );
+            Model* model = loadPLY("models/Cherries.ply","models/Cherries.png");
+
+            Camera camera = { /*from*/vec3f(30.f, 0.f, 0.f),
+                /* at */vec3f(0.f,0.f,0.f) ,
                 /* up */vec3f(0.f,1.f,0.f) };
             // something approximating the scale of the world, so the
             // camera knows how much to move for any given user interaction:
@@ -135,8 +167,9 @@ namespace osc {
 
             SampleWindow* window = new SampleWindow("Optix 7 Course Example",
                 model, camera, worldScale);
+            window->resize(vec2i(640, 480));
             window->run();
-
+            window->parseRayResult("test.txt");
         }
         catch (std::runtime_error& e) {
             std::cout << GDT_TERMINAL_RED << "FATAL ERROR: " << e.what()

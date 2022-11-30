@@ -55,6 +55,7 @@ namespace osc {
 
         /*! download the rendered color buffer */
         void downloadPixels(uint32_t h_pixels[]);
+        void downloadRayResult(vec3f results_origin[], vec3f results_target[]);
 
         /*! set camera to render with */
         void setCamera(const Camera& camera);
@@ -134,6 +135,8 @@ namespace osc {
         /*! @} */
 
         CUDABuffer colorBuffer;
+        CUDABuffer hitPointBuffer;
+        CUDABuffer originPointBuffer;
 
         /*! the camera we are to render with. */
         Camera lastSetCamera;

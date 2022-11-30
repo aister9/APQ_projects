@@ -363,7 +363,7 @@ namespace osc {
         pipelineCompileOptions = {};
         pipelineCompileOptions.traversableGraphFlags = OPTIX_TRAVERSABLE_GRAPH_FLAG_ALLOW_SINGLE_GAS;
         pipelineCompileOptions.usesMotionBlur = false;
-        pipelineCompileOptions.numPayloadValues = 2;
+        pipelineCompileOptions.numPayloadValues = 4;
         pipelineCompileOptions.numAttributeValues = 2;
         pipelineCompileOptions.exceptionFlags = OPTIX_EXCEPTION_FLAG_NONE;
         pipelineCompileOptions.pipelineLaunchParamsVariableName = "optixLaunchParams";
@@ -626,11 +626,15 @@ namespace osc {
 
         // resize our cuda frame buffer
         colorBuffer.resize(newSize.x * newSize.y * sizeof(uint32_t));
+        hitPointBuffer.resize(newSize.x * newSize.y * sizeof(vec3f));
+        originPointBuffer.resize(newSize.x * newSize.y * sizeof(vec3f));
 
         // update the launch parameters that we'll pass to the optix
         // launch:
         launchParams.frame.size = newSize;
         launchParams.frame.colorBuffer = (uint32_t*)colorBuffer.d_pointer();
+        launchParams.frame.rayTargetBuff = (vec3f*)hitPointBuffer.d_pointer();
+        launchParams.frame.rayOriginBuff = (vec3f*)originPointBuffer.d_pointer();
 
         // and re-set the camera, since aspect may have changed
         setCamera(lastSetCamera);
@@ -640,6 +644,15 @@ namespace osc {
     void SampleRenderer::downloadPixels(uint32_t h_pixels[])
     {
         colorBuffer.download(h_pixels,
+            launchParams.frame.size.x * launchParams.frame.size.y);
+    }
+
+    void SampleRenderer::downloadRayResult(vec3f results_origin[], vec3f results_target[])
+    {
+        originPointBuffer.download(results_origin,
+            launchParams.frame.size.x * launchParams.frame.size.y);
+
+        hitPointBuffer.download(results_target,
             launchParams.frame.size.x * launchParams.frame.size.y);
     }
 

@@ -60,4 +60,5 @@ namespace osc {
     };
 
     Model* loadOBJ(const std::string& objFile);
+    Model* loadPLY(const std::string& objFile, const std::string& texFile);
 }

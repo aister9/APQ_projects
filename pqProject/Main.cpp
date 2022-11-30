@@ -95,7 +95,7 @@ int main(int argc, char* args[]) {
     */
     AISTER_GRAPHICS_ENGINE::range_data rd;
     rd.read("example/data/", "bun.conf");
-    rd.baseCam.direction = glm::normalize(glm::mat4(rd.baseCam.rotation) * glm::vec4(0, 0, -1, 1));
+    rd.baseCam.direction = glm::normalize(glm::mat3(rd.baseCam.rotation) * glm::vec3(0, 0, -1));
     rd.setCameraAllResol(glm::vec2(width, height));
 
     AISTER_GRAPHICS_ENGINE::Shader range_shader;

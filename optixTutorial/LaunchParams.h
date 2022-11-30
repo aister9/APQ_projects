@@ -36,6 +36,8 @@ namespace osc {
     {
         struct {
             uint32_t* colorBuffer;
+            vec3f* rayOriginBuff;
+            vec3f* rayTargetBuff;
             vec2i     size;
         } frame;
 
