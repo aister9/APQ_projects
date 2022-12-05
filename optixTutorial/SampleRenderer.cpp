@@ -363,7 +363,7 @@ namespace osc {
         pipelineCompileOptions = {};
         pipelineCompileOptions.traversableGraphFlags = OPTIX_TRAVERSABLE_GRAPH_FLAG_ALLOW_SINGLE_GAS;
         pipelineCompileOptions.usesMotionBlur = false;
-        pipelineCompileOptions.numPayloadValues = 4;
+        pipelineCompileOptions.numPayloadValues = 6;
         pipelineCompileOptions.numAttributeValues = 2;
         pipelineCompileOptions.exceptionFlags = OPTIX_EXCEPTION_FLAG_NONE;
         pipelineCompileOptions.pipelineLaunchParamsVariableName = "optixLaunchParams";
@@ -584,6 +584,11 @@ namespace osc {
 
         launchParamsBuffer.upload(&launchParams, 1);
 
+        cudaEvent_t start, end;
+        cudaEventCreate(&start);
+        cudaEventCreate(&end);
+
+        cudaEventRecord(start, stream);
         OPTIX_CHECK(optixLaunch(/*! pipeline we're launching launch: */
             pipeline, stream,
             /*! parameters and SBT */
@@ -599,23 +604,21 @@ namespace osc {
         // display (obviously, for a high-performance application you
         // want to use streams and double-buffering, but for this simple
         // example, this will have to do)
+        cudaEventRecord(end, stream);
         CUDA_SYNC_CHECK();
+
+        float times;
+        cudaEventElapsedTime(&times, start, end);
+
+        std::cout << "launch time : " << times << "ms" << std::endl;
     }
 
     /*! set camera to render with */
-    void SampleRenderer::setCamera(const Camera& camera)
+    void SampleRenderer::setCamera(const vec3f camera[11])
     {
-        lastSetCamera = camera;
-        launchParams.camera.position = camera.from;
-        launchParams.camera.direction = normalize(camera.at - camera.from);
-        const float cosFovy = 0.66f;
-        const float aspect = launchParams.frame.size.x / float(launchParams.frame.size.y);
-        launchParams.camera.horizontal
-            = cosFovy * aspect * normalize(cross(launchParams.camera.direction,
-                camera.up));
-        launchParams.camera.vertical
-            = cosFovy * normalize(cross(launchParams.camera.horizontal,
-                launchParams.camera.direction));
+        for (int i = 0; i < 11; i++) {
+            launchParams.camera.position[i] = camera[i];
+        }
     }
 
     /*! resize frame buffer to given resolution */
@@ -625,26 +628,31 @@ namespace osc {
         if (newSize.x == 0 | newSize.y == 0) return;
 
         // resize our cuda frame buffer
-        colorBuffer.resize(newSize.x * newSize.y * sizeof(uint32_t));
         hitPointBuffer.resize(newSize.x * newSize.y * sizeof(vec3f));
         originPointBuffer.resize(newSize.x * newSize.y * sizeof(vec3f));
 
         // update the launch parameters that we'll pass to the optix
         // launch:
         launchParams.frame.size = newSize;
-        launchParams.frame.colorBuffer = (uint32_t*)colorBuffer.d_pointer();
         launchParams.frame.rayTargetBuff = (vec3f*)hitPointBuffer.d_pointer();
         launchParams.frame.rayOriginBuff = (vec3f*)originPointBuffer.d_pointer();
-
-        // and re-set the camera, since aspect may have changed
-        setCamera(lastSetCamera);
     }
 
-    /*! download the rendered color buffer */
-    void SampleRenderer::downloadPixels(uint32_t h_pixels[])
-    {
-        colorBuffer.download(h_pixels,
-            launchParams.frame.size.x * launchParams.frame.size.y);
+    void SampleRenderer::setWeightBuffer(size_t size) {
+        weightBuffer.resize(size);
+
+        launchParams.frame.weightBuffer = (float*)weightBuffer.d_pointer();
+    }
+
+    void SampleRenderer::setVertexList(const Model* model) {
+        inputvertexBuffer.alloc_and_upload(model->meshes[0]->vertex);
+
+        launchParams.inputVertex.vertex = (vec3f*)inputvertexBuffer.d_pointer();
+        launchParams.inputVertex.size = model->meshes[0]->vertex.size();
+    }
+
+    void SampleRenderer::setInitDistance(float sigma) {
+        launchParams.initDistance = sigma;
     }
 
     void SampleRenderer::downloadRayResult(vec3f results_origin[], vec3f results_target[])
@@ -654,6 +662,10 @@ namespace osc {
 
         hitPointBuffer.download(results_target,
             launchParams.frame.size.x * launchParams.frame.size.y);
+    }
+
+    void SampleRenderer::downloadWeightResult(float weightOrigin[], size_t sizes ) {
+        weightBuffer.download(weightOrigin, sizes);
     }
 
 } // ::osc

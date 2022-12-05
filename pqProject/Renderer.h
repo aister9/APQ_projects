@@ -32,7 +32,7 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glGenVertexArrays(1, &(this->VAO));
 			glGenBuffers(1, &(this->VBO));
 			glGenBuffers(1, &(this->EBO));
-			glGenBuffers(1, &(this->UVBO));
+			if(data->hasTexture) glGenBuffers(1, &(this->UVBO));
 			glBindVertexArray(this->VAO);
 
 			glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
@@ -43,10 +43,12 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 
-			glBindBuffer(GL_ARRAY_BUFFER, this->UVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * data->uvs.size(), &data->uvs[0], GL_STATIC_DRAW);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
+			if (data->hasTexture) {
+				glBindBuffer(GL_ARRAY_BUFFER, this->UVBO);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * data->uvs.size(), &data->uvs[0], GL_STATIC_DRAW);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+				glEnableVertexAttribArray(1);
+			}
 		}
 
 		void Draw(Camera cam, bool depthOption = false) {
@@ -60,6 +62,8 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glUniformMatrix4fv(location_MVP, 1, GL_FALSE, &MVPmat[0][0]);
 			GLuint location_isDepth = glGetUniformLocation(shader->shaderProgram, "drawDepth");
 			glUniform1i(location_isDepth, depthOption);
+			GLuint location_hasTextrue = glGetUniformLocation(shader->shaderProgram, "hasTexture");
+			glUniform1i(location_hasTextrue, data->hasTexture);
 
 			glBindTexture(GL_TEXTURE_2D, textures->texture);
 			glBindVertexArray(this->VAO);
@@ -78,8 +82,10 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glUniform4fv(location_color, 1, &(color)[0]);
 			GLuint location_isDepth = glGetUniformLocation(shader->shaderProgram, "drawDepth");
 			glUniform1i(location_isDepth, depthOption);
+			GLuint location_hasTextrue = glGetUniformLocation(shader->shaderProgram, "hasTexture");
+			glUniform1i(location_hasTextrue, data->hasTexture);
 
-			glBindTexture(GL_TEXTURE_2D, textures->texture);
+			if(data->hasTexture) glBindTexture(GL_TEXTURE_2D, textures->texture);
 			glBindVertexArray(this->VAO);
 			glDrawElements(GL_TRIANGLES, data->faces.size(), GL_UNSIGNED_INT, 0);
 
@@ -94,6 +100,8 @@ namespace AISTER_GRAPHICS_ENGINE {
 			glUniform4fv(location_color, 1, &(color)[0]);
 			GLuint location_isDepth = glGetUniformLocation(shader->shaderProgram, "drawDepth");
 			glUniform1i(location_isDepth, false);
+			GLuint location_hasTextrue = glGetUniformLocation(shader->shaderProgram, "hasTexture");
+			glUniform1i(location_hasTextrue, data->hasTexture);
 
 			glBindTexture(GL_TEXTURE_2D, textures->texture);
 			glBindVertexArray(this->VAO);

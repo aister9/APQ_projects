@@ -35,18 +35,22 @@ namespace osc {
     struct LaunchParams
     {
         struct {
-            uint32_t* colorBuffer;
             vec3f* rayOriginBuff;
             vec3f* rayTargetBuff;
-            vec2i     size;
+            float* weightBuffer;
+            vec2i  size;
         } frame;
 
         struct {
-            vec3f position;
-            vec3f direction;
-            vec3f horizontal;
-            vec3f vertical;
+            vec3f* vertex;
+            int  size;
+        } inputVertex;
+
+        struct {
+            vec3f position[11];
         } camera;
+
+        float initDistance;
 
         OptixTraversableHandle traversable;
     };

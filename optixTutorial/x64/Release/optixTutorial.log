@@ -1,2 +1,132 @@
-﻿  optixTutorial.vcxproj -> C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exe
+﻿  Main.cpp
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\common\3rdParty\glfw\include\GLFW\glfw3.h(2537,1): warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(177,36): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(181,37): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(185,36): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(189,36): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(193,36): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(197,35): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(201,35): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(205,35): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(209,35): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(213,34): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(217,35): warning C4305: 'argument': truncation from 'double' to 'const T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Main.cpp(222,68): warning C4267: 'argument': conversion from 'size_t' to 'const T', possible loss of data
+          with
+          [
+              T=int32_t
+          ]
+  Model.cpp
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\common\3rdParty\stb_image.h(7192,9): warning C4068: unknown pragma 'clang'
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(232,38): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(236,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(244,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(246,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(248,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(250,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(252,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(254,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(256,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(258,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(360,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(362,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(364,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(366,35): warning C4244: 'argument': conversion from 'float' to 'const T', possible loss of data
+          with
+          [
+              T=int32_t
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(366,31): warning C4244: 'argument': conversion from 'float' to 'const T', possible loss of data
+          with
+          [
+              T=int32_t
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(366,27): warning C4244: 'argument': conversion from 'float' to 'const T', possible loss of data
+          with
+          [
+              T=int32_t
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(380,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(382,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\utility(242,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+          and
+          [
+              _Ty1=int
+          ]
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(384): message : see reference to function template instantiation 'std::pair<int,int>::pair<float,float,0>(std::pair<float,float> &&) noexcept' being compiled
+C:\Users\Ataraxia\source\repos\pqProject\optixTutorial\Model.cpp(384): message : see reference to function template instantiation 'std::pair<int,int>::pair<float,float,0>(std::pair<float,float> &&) noexcept' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\utility(242,61): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+          and
+          [
+              _Ty2=int
+          ]
+     Creating library C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.lib and object C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exp
+  Generating code
+  1 of 1455 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  optixTutorial.vcxproj -> C:\Users\Ataraxia\source\repos\pqProject\x64\Release\optixTutorial.exe
+devicePrograms.cu(81): warning : variable "index" was declared but never referenced
+  
+devicePrograms.cu(123): warning : integer conversion resulted in a change of sign
+  
+devicePrograms.cu(124): warning : integer conversion resulted in a change of sign
+  
+devicePrograms.cu(163): warning : integer conversion resulted in a change of sign
+  
+devicePrograms.cu(207): warning : integer conversion resulted in a change of sign
+  
   devicePrograms.cu

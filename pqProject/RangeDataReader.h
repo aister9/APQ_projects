@@ -56,23 +56,23 @@ namespace AISTER_GRAPHICS_ENGINE {
 						posquat[i] = std::stof(tmp);
 					}
 
-					/*data.position = glm::vec3(posquat[0], posquat[1], posquat[2]);
-					data.rotation = glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]);*/
+					data.position = glm::vec3(posquat[0], posquat[1], posquat[2]);
+					data.rotation = glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]);
 
 					datas.push_back(data);
 
 					Camera cams;
-					//if (camInfo.size() == 0) {
-					//	cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(baseCam.position, 1))
-					//		+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
-					//	cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(baseCam.rotation)); // r'*r
-					//}
-					//else {
-					//	cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(camInfo.back().position, 1))
-					//		+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
-					//	cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(camInfo.back().rotation)); // r'*r
-					//}
 					cams = baseCam;
+					if (camInfo.size() == 0) {
+						cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(baseCam.position, 1))
+							+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
+						cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(baseCam.rotation)); // r'*r
+					}
+					else {
+						cams.position = glm::vec3((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::vec4(camInfo.back().position, 1))
+							+ glm::vec3(posquat[0], posquat[1], posquat[2]); // r'*t + t'
+						cams.rotation = glm::toQuat((glm::toMat4(glm::quat(posquat[3], posquat[4], posquat[5], posquat[6]))) * glm::toMat4(camInfo.back().rotation)); // r'*r
+					}
 					cams.direction = glm::normalize(glm::toMat3(cams.rotation) * glm::vec3(0,0,-1));
 
 					camInfo.push_back(cams);

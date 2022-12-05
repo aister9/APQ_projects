@@ -13,6 +13,8 @@ namespace AISTER_GRAPHICS_ENGINE {
 		std::vector<int> faces;
 		std::vector<glm::vec2> uvs;
 
+		bool hasTexture;
+
 		PLYdata() {}
 
 		//get ply data
@@ -20,6 +22,8 @@ namespace AISTER_GRAPHICS_ENGINE {
 			std::ifstream m_file(ply_path);
 			float vertexsize = 0;
 			float facesize = 0;
+
+			hasTexture = true;
 
 			while (!m_file.eof()) {
 				std::string tmp;
@@ -82,6 +86,65 @@ namespace AISTER_GRAPHICS_ENGINE {
 			m_file.close();
 		}
 
+		PLYdata(std::string ply_path, bool isTest) {
+			std::ifstream m_file(ply_path);
+			float vertexsize = 0;
+			float facesize = 0;
+
+			hasTexture = false;
+
+			while (!m_file.eof()) {
+				std::string tmp;
+				m_file >> tmp;
+
+				if (tmp._Equal("element")) {
+					m_file >> tmp;
+					if (tmp._Equal("vertex")) {
+						m_file >> tmp;
+						vertexsize = atof(tmp.c_str());
+					}
+					else if (tmp._Equal("face")) {
+						m_file >> tmp;
+						facesize = atof(tmp.c_str());
+					}
+				}
+
+				if (tmp._Equal("end_header")) {
+					for (int i = 0; i < vertexsize; i++) {
+						float x, y, z, conf, inten;
+						m_file >> tmp;
+						x = atof(tmp.c_str());
+						m_file >> tmp;
+						y = atof(tmp.c_str());
+						m_file >> tmp;
+						z = atof(tmp.c_str());
+						m_file >> tmp;
+						conf = atof(tmp.c_str());
+						m_file >> tmp;
+						inten = atof(tmp.c_str());
+
+						glm::vec3 pos(x, y, z);
+
+						vertices.push_back(pos);
+					}
+
+					for (int i = 0; i < facesize; i++) {
+						int count = 0;
+						m_file >> tmp;
+						count = atoi(tmp.c_str());
+
+						for (int j = 0; j < count; j++) {
+							int idx = 0;
+							m_file >> tmp;
+							idx = atoi(tmp.c_str());
+							faces.push_back(idx);
+						}
+					}
+				}
+			}
+
+			m_file.close();
+		}
 		void print() {
 			std::cout << "Vertex size : " << vertices.size() << " face : " << faces.size() / 3 << std::endl;
 			std::cout << "Postion : " << position.x << ", " << position.y << ", " << position.z << std::endl;

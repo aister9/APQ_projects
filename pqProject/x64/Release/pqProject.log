@@ -1,16 +1,23 @@
 ﻿  Main.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\3rdParty\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(32,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(36,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(44,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(46,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(36,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(40,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(48,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(50,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(52,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(50,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(52,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(54,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(56,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(58,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(60,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(62,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(104,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(108,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(116,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(118,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(120,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(122,18): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\plyData.h(124,19): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\Camera.h(36,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
           with
           [
@@ -21,9 +28,9 @@ C:\Users\Ataraxia\source\repos\pqProject\pqProject\Camera.h(37,25): warning C424
           [
               T=float
           ]
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(66,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(84,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(100,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(70,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(90,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Renderer.h(108,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\BoxRenderer.h(85,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataReader.h(112,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataReader.h(120,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
@@ -47,6 +54,9 @@ C:\Users\Ataraxia\source\repos\pqProject\pqProject\ColorUtil.h(29,25): warning C
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(49,61): warning C4244: 'argument': conversion from 'unsigned __int64' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(49,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(58,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(70,62): warning C4244: 'argument': conversion from 'unsigned __int64' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(70,40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\RangeDataRenderer.h(79,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\Scene.h(31,77): warning C4244: 'initializing': conversion from 'T' to 'size_t', possible loss of data
           with
           [
@@ -130,26 +140,52 @@ C:\Users\Ataraxia\source\repos\pqProject\pqProject\Scene.h(117,42): warning C424
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\QBVH4.h(7,40): warning C4091: 'typedef ': ignored on left of 'AISTER_GRAPHICS_ENGINE::__Tri_t' when no variable is declared
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\QBVH4.h(12,3): warning C4091: 'typedef ': ignored on left of 'AISTER_GRAPHICS_ENGINE::Box3ui8' when no variable is declared
 C:\Users\Ataraxia\source\repos\pqProject\pqProject\Ray.h(70,1): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(64,17): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(12,36): warning C4091: 'typedef ': ignored on left of 'Tet_t' when no variable is declared
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(24,2): warning C4091: 'typedef ': ignored on left of 'Triangle_t' when no variable is declared
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(27,2): warning C4091: 'typedef ': ignored on left of 'TetraInfo' when no variable is declared
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(33,2): warning C4091: 'typedef ': ignored on left of 'Triangle_SOA' when no variable is declared
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(51,49): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(54,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(54,21): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(153,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(154,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(155,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(156,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(205,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(207,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(209,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(212,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(213,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(214,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(228,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(230,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(233,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(234,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(258,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(380,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(395,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\MVSScene.h(416,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(68,17): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(67,41): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(71,41): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(71,17): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(75,17): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(190,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(250,143): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(291,119): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(202,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(247,143): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Ataraxia\source\repos\pqProject\pqProject\Main.cpp(312,119): warning C4305: 'argument': truncation from 'double' to 'float'
   Generating code
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 1314 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  1 of 1490 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   pqProject.vcxproj -> C:\Users\Ataraxia\source\repos\pqProject\x64\Release\pqProject.exe

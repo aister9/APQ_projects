@@ -12,6 +12,10 @@
 #include "Scene.h"
 #include "QBVH4.h"
 #include "Ray.h"
+
+#include "MVSInterface.h"
+#include "MVSScene.h"
+
 using namespace std;
 
 glm::vec3 camPos(30, 0, 0);
@@ -93,7 +97,7 @@ void parseRayResult(const std::string& output, glm::vec3 rayOrigin, std::vector<
         }
     }
 
-    std::cout << "complete";
+    std::cout << " complete" << std::endl;
 
     ofs.close();
 }
@@ -147,6 +151,11 @@ int main(int argc, char* args[]) {
     rd.baseCam.direction = glm::normalize(glm::mat3(rd.baseCam.rotation) * glm::vec3(0, 0, -1));
     rd.setCameraAllResol(glm::vec2(width, height));
 
+
+    AISTER_GRAPHICS_ENGINE::PLYdata Bunny("example/bun_zipper.ply", false);
+    Bunny.print();
+
+
     AISTER_GRAPHICS_ENGINE::Shader range_shader;
     range_shader.initShaders("pc_v.glsl", "pc_f.glsl");
     AISTER_GRAPHICS_ENGINE::Range_Renderer rr;
@@ -158,6 +167,9 @@ int main(int argc, char* args[]) {
 
     AISTER_GRAPHICS_ENGINE::plyRenderer renderer;
     renderer.SetShaderPLY(&plys, &sh, &tex);
+
+    AISTER_GRAPHICS_ENGINE::plyRenderer bunrenderer;
+    bunrenderer.SetShaderPLY(&Bunny, &sh, &tex);
 
     AISTER_GRAPHICS_ENGINE::Camera cam;
     cam.position = camPos;
@@ -195,21 +207,6 @@ int main(int argc, char* args[]) {
 
 
     vector<glm::vec3> dirList;
-
-    /*for (int yy = 0; yy < height; yy++) {
-        for (int xx = 0; xx < width; xx++) {
-            float nds_x = (2.0 * xx) / width - 1.0f;
-            float nds_y = 1.0f-(2.0f*yy)/height;
-            
-            glm::vec4 ray_clip = glm::vec4(nds_x, nds_y, -1.0f, 1.0f);
-            glm::vec4 ray_eye = glm::inverse(cam.getProjectionMatrix())* ray_clip;
-            ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
-
-            glm::vec4 ray_world = glm::inverse(cam.getViewMatrix(glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) * ray_eye;
-            glm::vec3 ray_res = glm::normalize(glm::vec3(ray_world));
-            dirList.push_back(ray_res);
-        }
-    }*/
 
     for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
@@ -280,7 +277,31 @@ int main(int argc, char* args[]) {
     cam.position = cam.position + glm::vec3(0,15,7);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
+    MVS_PCD testPCD;
+    testPCD.readPrecomputed("example/tet.apq");
+
+    cout << glm::to_string(testPCD.getTRS()) << endl;
+    cout << testPCD.pts.size() << endl;
+    cout << glm::to_string(testPCD.cams[0].getProjectionMatrix()) << endl;
+    cout << glm::to_string(testPCD.cams[0].getViewMatrix()) << endl;
+    cout << testPCD.faces.vIdx.size() << endl;
+    cout << testPCD.faces.tIdx.size() << endl;
+    cout << testPCD.faces.weight.size() << endl;
+
+    AISTER_GRAPHICS_ENGINE::PCDRenderer pr;
+    pr.setShader(&testPCD, &range_shader);
+     
+    auto vv = testPCD.getMinMaxWeight();
+
+    AISTER_GRAPHICS_ENGINE::Camera cam2;
+    cam2.position = testPCD.cams[3].position;
+    //cam2.position = testPCD.get_3d_bbox().center + testPCD.get_3d_bbox().size;
+    cam2._far = 1000.f;
+
+    cam2.screenResolution = glm::vec2(width, height);
+    cam2.direction = glm::normalize(testPCD.get_3d_bbox().center - cam2.position);
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // m2c values
@@ -329,8 +350,7 @@ int main(int argc, char* args[]) {
         
         glDepthFunc(GL_LESS);
         //renderer.Draw(cam, glm::vec4(1, 0, 0, 1), false);
-        //renderer.Draw(persp * m2c, glm::vec4(1, 0, 0, 1));
-        rr.Draw(rd.baseCam);
+        pr.DrawTetra(cam2);
 
         glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameImage);
 

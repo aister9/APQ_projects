@@ -333,4 +333,92 @@ namespace osc {
 
         return model;
     }
+
+    TriangleMesh* readPrecomputed(std::string path, std::vector<float> &weight, std::vector<std::pair<int, int>> &tet) {
+        std::ifstream ifile(path);
+        TriangleMesh* mesh = new TriangleMesh;
+
+        std::string ss;
+        while (!ifile.eof()) {
+            ifile >> ss;
+
+            if (ss._Equal("xyz")) {
+                float x, y, z;
+                ifile >> ss;
+                x = stof(ss);
+                ifile >> ss;
+                y = stof(ss);
+                ifile >> ss;
+                z = stof(ss);
+
+                vec3f pos(x, y, z);
+                mesh->vertex.push_back(pos);
+            }
+            if (ss._Equal("tri")) {
+                float v0, v1, v2;
+                ifile >> ss;
+                v0 = stoi(ss);
+                ifile >> ss;
+                v1 = stoi(ss);
+                ifile >> ss;
+                v2 = stoi(ss);
+
+                vec3i tri(v0, v1, v2);
+
+                mesh->index.push_back(tri);
+            }
+            if (ss._Equal("w")) {
+                float v0;
+                ifile >> ss;
+                v0 = stof(ss);
+
+                weight.push_back(v0);
+            }
+            if (ss._Equal("tet")) {
+                float v0, v1;
+                ifile >> ss;
+                v0 = stoi(ss);
+                ifile >> ss;
+                v1 = stoi(ss);
+
+                tet.push_back(std::make_pair(v0, v1));
+            }
+        }
+
+        ifile.close();
+
+        return mesh;
+    }
+
+    Model* loadAPQ(const std::string& apqFile, std::vector<float>& weight, std::vector<std::pair<int, int>>& tet) {
+        Model* model = new Model;
+
+        TriangleMesh* mesh = readPrecomputed(apqFile, weight, tet);
+        model->meshes.push_back(mesh);
+               
+        for (auto mesh : model->meshes)
+            for (auto vtx : mesh->vertex)
+                model->bounds.extend(vtx);
+
+        return model;
+    }
+
+    void saveAPQ(const Model* model, const std::string& apqFile, std::vector<float>& weight, std::vector<std::pair<int, int>>& tet) {
+        std::ofstream os(apqFile);
+
+        if (!os.is_open()) return;
+
+        os << "vertex " << model->meshes[0]->vertex.size() << std::endl;
+        for (int i = 0; i < model->meshes[0]->vertex.size(); i++) {
+            os << "xyz " << model->meshes[0]->vertex[i].x << " " << model->meshes[0]->vertex[i].y << " " << model->meshes[0]->vertex[i].z << std::endl;
+        }
+        os << "Triangle " << model->meshes[0]->index.size() << std::endl;
+        for (int i = 0; i < model->meshes[0]->index.size(); i++) {
+            os << "tri " << model->meshes[0]->index[i].x << " " << model->meshes[0]->index[i].y << " " << model->meshes[0]->index[i].z << std::endl;
+            os << "w " << weight[i] << std::endl;
+            os << "tet " << tet[i].first << " " << tet[i].second << std::endl;
+        }
+
+        os.close();
+    }
 }

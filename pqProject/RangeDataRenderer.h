@@ -59,6 +59,25 @@ namespace AISTER_GRAPHICS_ENGINE {
 			}
 
 		}
+
+		void Draw(int idx) {
+			shader->call();
+
+			glm::mat4 trs = rd->datas[idx].getTRS();
+			//glm::mat4 MVPmat = cam.getProjectionMatrix() *cam.getViewMatrix() * trs;
+			glm::mat4 MVPmat = rd->camInfo[0].getProjectionMatrix() * rd->camInfo[0].getViewMatrix() * trs;
+
+			_color = ColorUtil::getColorfromJET(idx, 0, rd->datas.size());
+			_color.a = 0.2f;
+
+			GLuint location_MVP = glGetUniformLocation(shader->shaderProgram, "MVP");
+			glUniformMatrix4fv(location_MVP, 1, GL_FALSE, &MVPmat[0][0]);
+			GLuint location_color = glGetUniformLocation(shader->shaderProgram, "mtlColor");
+			glUniform4fv(location_color, 1, &(_color[0]));
+
+			glBindVertexArray(VAO[idx]);
+			glDrawArrays(GL_POINTS, 0, rd->datas[idx].vertices.size());
+		}
 	};
 
 }

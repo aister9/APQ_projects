@@ -3,6 +3,7 @@
 uniform vec4 mtlColor;
 
 uniform bool drawDepth;
+uniform bool hasTexture;
 
 uniform sampler2D textures;
 
@@ -20,11 +21,15 @@ float LinearizeDepth(float depth)
 
 void main() {
 	
-	if(!drawDepth)
+	if(!drawDepth && hasTexture)
 		color = texture(textures, TexCoord);
 	else {
-		// depth = LinearizeDepth(gl_FragCoord.z) / far; // divide by far for demonstration
-		float depth = gl_FragCoord.w; // divide by far for demonstration
-		color = vec4(vec3(depth), 1.0);
+		if (drawDepth) {
+			float depth = LinearizeDepth(gl_FragCoord.z) / far; // divide by far for demonstration
+			//float depth = gl_FragCoord.w; // divide by far for demonstration
+			color = vec4(vec3(depth), 1.0);
+		}
+		else
+			color = mtlColor;
 	}
 }

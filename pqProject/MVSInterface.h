@@ -10,7 +10,9 @@
 #include <limits>
 
 #include <vector>
-#include "opencv2/opencv.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 // D E F I N E S ///////////////////////////////////////////////////
 
@@ -21,13 +23,6 @@
 #ifndef _INTERFACE_NAMESPACE
 #define _INTERFACE_NAMESPACE MVS
 #endif
-
-// uncomment to enable custom OpenCV data types
-// (should be uncommented if OpenCV is not available)
-#if !defined(_USE_OPENCV) && !defined(_USE_CUSTOM_CV)
-#define _USE_CUSTOM_CV
-#endif
-
 
 // S T R U C T S ///////////////////////////////////////////////////
 
@@ -242,6 +237,7 @@ namespace _INTERFACE_NAMESPACE {
 			// load project header ID
 			char szHeader[4];
 			stream.read(szHeader, 4);
+			printf("%s\n", szHeader);
 			if (!stream)
 				return false;
 			if (strncmp(szHeader, MVSI_PROJECT_ID, 4) != 0) {
@@ -258,6 +254,7 @@ namespace _INTERFACE_NAMESPACE {
 			else {
 				// load project version
 				stream.read((char*)&version, sizeof(uint32_t));
+				printf("%s\n", version);
 				if (!stream || version > MVSI_PROJECT_VER)
 					return false;
 				// skip reserved bytes

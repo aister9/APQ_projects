@@ -54,11 +54,16 @@ namespace osc {
         void resize(const vec2i& newSize);
 
         /*! download the rendered color buffer */
-        void downloadPixels(uint32_t h_pixels[]);
         void downloadRayResult(vec3f results_origin[], vec3f results_target[]);
+        void downloadWeightResult(float weightOrigin[], size_t sizes);
+
+        void setWeightBuffer(size_t size);
+        void setInitDistance(float sigma);
+
+        void setVertexList(const Model* model);
 
         /*! set camera to render with */
-        void setCamera(const Camera& camera);
+        void setCamera(const vec3f camera[11]);
     protected:
         // ------------------------------------------------------------------
         // internal helper functions
@@ -134,9 +139,11 @@ namespace osc {
         CUDABuffer   launchParamsBuffer;
         /*! @} */
 
-        CUDABuffer colorBuffer;
         CUDABuffer hitPointBuffer;
         CUDABuffer originPointBuffer;
+        CUDABuffer weightBuffer;
+
+        CUDABuffer inputvertexBuffer;
 
         /*! the camera we are to render with. */
         Camera lastSetCamera;

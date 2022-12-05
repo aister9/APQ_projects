@@ -55,6 +55,10 @@ namespace osc {
         return reinterpret_cast<T*>(unpackPointer(u0, u1));
     }
 
+    __device__ float a_vis(const float dist, const float sig) {
+        return (1 - exp(-(dist * dist) / (sig * sig)));
+    }
+
     //------------------------------------------------------------------------------
     // closest hit and anyhit programs for radiance-type rays.
     //
@@ -73,58 +77,22 @@ namespace osc {
         // ------------------------------------------------------------------
         // gather some basic hit information
         // ------------------------------------------------------------------
-        const int   primID = optixGetPrimitiveIndex();
+        const int   primID = optixGetPrimitiveIndex(); // triangleIndex
         const vec3i index = sbtData.index[primID];
         const float tmax = optixGetRayTmax();
-        const float u = optixGetTriangleBarycentrics().x;
-        const float v = optixGetTriangleBarycentrics().y;
 
-        // ------------------------------------------------------------------
-        // compute normal, using either shading normal (if avail), or
-        // geometry normal (fallback)
-        // ------------------------------------------------------------------
-        vec3f N;
-        if (sbtData.normal) {
-            N = (1.f - u - v) * sbtData.normal[index.x]
-                + u * sbtData.normal[index.y]
-                + v * sbtData.normal[index.z];
-        }
-        else {
-            const vec3f& A = sbtData.vertex[index.x];
-            const vec3f& B = sbtData.vertex[index.y];
-            const vec3f& C = sbtData.vertex[index.z];
-            N = normalize(cross(B - A, C - A));
-        }
-        N = normalize(N);
-
-        // ------------------------------------------------------------------
-        // compute diffuse material color, including diffuse texture, if
-        // available
-        // ------------------------------------------------------------------
-        vec3f diffuseColor = sbtData.color;
-        if (sbtData.hasTexture && sbtData.texcoord) {
-            const vec2f tc
-                = (1.f - u - v) * sbtData.texcoord[index.x]
-                + u * sbtData.texcoord[index.y]
-                + v * sbtData.texcoord[index.z];
-
-            vec4f fromTexture = tex2D<float4>(sbtData.texture, tc.x, tc.y);
-            diffuseColor *= (vec3f)fromTexture;
-        }
-
-        // ------------------------------------------------------------------
-        // perform some simple "NdotD" shading
-        // ------------------------------------------------------------------
         const vec3f rayDir = optixGetWorldRayDirection();
-        const float cosDN = 0.2f + .8f * fabsf(dot(rayDir, N));
         vec3f& prd = *(vec3f*)getPRD<vec3f>();
-        prd = cosDN * diffuseColor;
+        prd = vec3f(1,0,0);
 
         const uint32_t u2 = optixGetPayload_2();
         const uint32_t u3 = optixGetPayload_3();
         vec3f& hitPos = *(vec3f*)reinterpret_cast<vec3f*>(unpackPointer(u2, u3));
         const vec3f rayOrigin = optixGetWorldRayOrigin();
         hitPos = rayOrigin + tmax * rayDir;
+
+        optixSetPayload_4(primID);
+        optixSetPayload_5(tmax);
     }
 
     extern "C" __global__ void __anyhit__radiance()
@@ -151,6 +119,9 @@ namespace osc {
         const uint32_t u3 = optixGetPayload_3();
         vec3f& hitPos = *(vec3f*)reinterpret_cast<vec3f*>(unpackPointer(u2, u3));
         hitPos = vec3f(-123456789.f, -123456789.f, -123456789.f);
+
+        optixSetPayload_4(-1);
+        optixSetPayload_5(-1);
     }
 
     //------------------------------------------------------------------------------
@@ -159,10 +130,21 @@ namespace osc {
     extern "C" __global__ void __raygen__renderFrame()
     {
         // compute a test pattern based on pixel ID
-        const int ix = optixGetLaunchIndex().x;
-        const int iy = optixGetLaunchIndex().y;
+        const int ix = optixGetLaunchIndex().x; //vertex idx
+        const int iy = optixGetLaunchIndex().y; //camera idx
 
         const auto& camera = optixLaunchParams.camera;
+
+        const float initTmax = 3*optixLaunchParams.initDistance;
+        const float __sig = optixLaunchParams.initDistance;
+
+        const TriangleMeshSBTData& sbtData
+            = *(const TriangleMeshSBTData*)optixGetSbtDataPointer();
+
+        if (iy >= 11 || ix >= optixLaunchParams.inputVertex.size) return;
+
+        vec3f rayTarget = optixLaunchParams.inputVertex.vertex[ix];
+        vec3f rayOrigin = camera.position[iy];
 
         // our per-ray data for this example. what we initialize it to
         // won't matter, since this value will be overwritten by either
@@ -178,42 +160,57 @@ namespace osc {
         uint32_t u2, u3;
         packPointer(&rayHitPosition, u2, u3);
 
-        // normalized screen plane position, in [0,1]^2
-        const vec2f screen(vec2f(ix + .5f, iy + .5f)
-            / vec2f(optixLaunchParams.frame.size));
+        uint32_t hitTriangleIndex = -1;
 
         // generate ray direction
-        vec3f rayDir = normalize(camera.direction
-            + (screen.x - 0.5f) * camera.horizontal
-            + (screen.y - 0.5f) * camera.vertical);
+        vec3f rayDir = normalize(rayTarget - rayOrigin); //is Fixed
 
-        optixTrace(optixLaunchParams.traversable,
-            camera.position,
-            rayDir,
-            0.f,    // tmin
-            1e20f,  // tmax
-            0.0f,   // rayTime
-            OptixVisibilityMask(255),
-            OPTIX_RAY_FLAG_DISABLE_ANYHIT,//OPTIX_RAY_FLAG_NONE,
-            SURFACE_RAY_TYPE,             // SBT offset
-            RAY_TYPE_COUNT,               // SBT stride
-            SURFACE_RAY_TYPE,             // missSBTIndex 
-            u0, u1,
-            u2, u3);
+        uint32_t hitDistance;
 
-        const int r = int(255.99f * pixelColorPRD.x);
-        const int g = int(255.99f * pixelColorPRD.y);
-        const int b = int(255.99f * pixelColorPRD.z);
+        float tMax = initTmax; // is variable
+        
+        uint32_t prevHitInd = hitTriangleIndex;
 
-        // convert to 32-bit rgba value (we explicitly set alpha to 0xff
-        // to make stb_image_write happy ...
-        const uint32_t rgba = 0xff000000
-            | (r << 0) | (g << 8) | (b << 16);
+        while (tMax > 0) {
+            packPointer(&rayHitPosition, u2, u3);
+
+            optixTrace(optixLaunchParams.traversable,
+                rayOrigin,
+                rayDir,
+                0.000001f,    // tmin
+                tMax,  // tmax
+                0.0f,   // rayTime
+                OptixVisibilityMask(255),
+                OPTIX_RAY_FLAG_DISABLE_ANYHIT,//OPTIX_RAY_FLAG_NONE,
+                SURFACE_RAY_TYPE,             // SBT offset
+                RAY_TYPE_COUNT,               // SBT stride
+                SURFACE_RAY_TYPE,             // missSBTIndex 
+                u0, u1,
+                u2, u3,
+                hitTriangleIndex,
+                hitDistance);
+
+            vec3f vv = rayTarget - rayHitPosition;
+            float dist = sqrt(dot(vv, vv));
+
+            rayOrigin = rayHitPosition;
+            tMax = tMax - (float)hitDistance;
+
+
+            if (prevHitInd == hitTriangleIndex) {
+                continue;
+            }
+            prevHitInd = hitTriangleIndex;
+
+            const float __w = a_vis(dist, __sig);
+
+            if (hitTriangleIndex != -1) atomicAdd(&optixLaunchParams.frame.weightBuffer[hitTriangleIndex], __w);
+            else break; //hit miss
+        }
 
         // and write to frame buffer ...
         const uint32_t fbIndex = ix + iy * optixLaunchParams.frame.size.x;
-        optixLaunchParams.frame.colorBuffer[fbIndex] = rgba;
-        optixLaunchParams.frame.rayOriginBuff[fbIndex] = camera.position;
+        optixLaunchParams.frame.rayOriginBuff[fbIndex] = rayOrigin;
         optixLaunchParams.frame.rayTargetBuff[fbIndex] = rayHitPosition;
     }
 

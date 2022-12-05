@@ -35,23 +35,24 @@ namespace osc {
             : GLFCameraWindow(title, camera.from, camera.at, camera.up, worldScale),
             sample(model)
         {
-            sample.setCamera(camera);
+            //sample.setCamera(camera);
         }
 
         virtual void render() override
         {
-            if (cameraFrame.modified) {
+            /*if (cameraFrame.modified) {
                 sample.setCamera(Camera{ cameraFrame.get_from(),
                                          cameraFrame.get_at(),
                                          cameraFrame.get_up() });
                 cameraFrame.modified = false;
-            }
+            }*/
+            sample.setInitDistance(2.0f);
+            sample.setWeightBuffer(sizeof(float)* weights.size());
             sample.render();
         }
 
         virtual void draw() override
         {
-            sample.downloadPixels(pixels.data());
             sample.downloadRayResult(rayOrigin.data(), rayTarget.data());
             if (fbTexture == 0)
                 glGenTextures(1, &fbTexture);
@@ -128,7 +129,7 @@ namespace osc {
                 }
             }
 
-            std::cout << "complete";
+            std::cout << "complete" <<std::endl;
 
             ofs.close();
         }
@@ -139,6 +140,9 @@ namespace osc {
         std::vector<uint32_t> pixels;
         std::vector<vec3f> rayOrigin;
         std::vector<vec3f> rayTarget;
+
+        public:
+            std::vector<float> weights;
     };
 
 
@@ -147,30 +151,98 @@ namespace osc {
     extern "C" int main(int ac, char** av)
     {
         try {
-//            Model* model = loadOBJ(
-//#ifdef _WIN32
-//                // on windows, visual studio creates _two_ levels of build dir
-//                // (x86/Release)
-//                "models/sponza.obj"
-//#else
-//                // on linux, common practice is to have ONE level of build dir
-//                // (say, <project>/build/)...
-//                "/models/sponza.obj"
-//#endif
-//            );
-            Model* model = loadPLY("models/Cherries.ply","models/Cherries.png");
+            std::vector<float> weights;
+            std::vector<std::pair<int, int>> tetras;
+            Model* model = loadAPQ("models/tetrahedron.apq", weights, tetras);
 
-            Camera camera = { /*from*/vec3f(30.f, 0.f, 0.f),
-                /* at */vec3f(0.f,0.f,0.f) ,
+            std::cout << "model vertex size : " << model->meshes[0]->vertex.size() << std::endl;
+            std::cout << "model tri size : " << model->meshes[0]->index.size() << std::endl;
+            std::cout << "model weight size : " << weights.size() << std::endl;
+            std::cout << "model tetras size : " << tetras.size() << std::endl;
+              
+            vec3f from = model->bounds.center() + model->bounds.size();
+            vec3f at = model->bounds.center();
+
+            Camera camera = { /*from*/from,
+                /* at */at ,
                 /* up */vec3f(0.f,1.f,0.f) };
             // something approximating the scale of the world, so the
             // camera knows how much to move for any given user interaction:
             const float worldScale = length(model->bounds.span());
 
-            SampleWindow* window = new SampleWindow("Optix 7 Course Example",
-                model, camera, worldScale);
-            window->run();
-            window->parseRayResult("test.txt");
+            vec3f cams[11];
+
+            cams[0] = vec3f(0.025730884620962389,
+                0.005601572570405825,
+                0.01597567841113321);
+
+            cams[1] = vec3f(0.3810877798322228,
+                -0.01665180729052384,
+                -0.06503797152529445);
+
+            cams[2] = vec3f(0.6330633126858081,
+                -0.021669968222753703,
+                -0.0833297799710703);
+
+            cams[3] = vec3f(0.7705729788683636,
+                -0.014459294101333682,
+                -0.0391654577887085);
+
+            cams[4] = vec3f(1.0044853197972546,
+                0.0013310199727547476,
+                0.03379707902389767);
+
+            cams[5] = vec3f(1.1992924274816506,
+                0.026952636241720668,
+                0.1497150231681726);
+
+            cams[6] = vec3f(1.3367036438812217,
+                0.06544004054031413,
+                0.3179096555741522);
+
+            cams[7] = vec3f(1.3896499687559494,
+                0.11932044219851415,
+                0.5746557540157031);
+
+            cams[8] = vec3f(1.4397271231838996,
+                0.18190199911482564,
+                0.8435911360770654);
+
+            cams[9] = vec3f(1.45543861907246,
+                0.2344942332385428,
+                1.083227922032751);
+
+            cams[10] = vec3f(1.3856453288653988,
+                0.28775204994020478,
+                1.3290640112599066);
+
+            SampleRenderer sample(model);
+            sample.setCamera(cams);
+            sample.setVertexList(model);
+            sample.resize(vec2i(model->meshes[0]->vertex.size(), 11));
+            sample.setInitDistance(4.5f);
+            sample.setWeightBuffer(sizeof(float) * weights.size());
+            sample.render();
+            sample.downloadWeightResult(weights.data(), weights.size());
+
+            std::cout << "save to apq" << std::endl;
+            saveAPQ(model, "tet.apq", weights, tetras);
+
+
+            //SampleWindow* window = new SampleWindow("Optix 7 Course Example",
+            //    model, camera, worldScale);
+            //window->weights = weights;
+            //window->run();
+            //window->parseRayResult("test.txt");
+            //window->sample.downloadWeightResult(weights.data(), weights.size());
+
+            //for (int i = 0; i < weights.size(); i++) {
+
+            //    if (weights[i] != 0) {
+            //        std::cout << i << " : " << weights[i] << std::endl;
+            //    }
+            //}
+
         }
         catch (std::runtime_error& e) {
             std::cout << GDT_TERMINAL_RED << "FATAL ERROR: " << e.what()
